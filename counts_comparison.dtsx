@@ -1,0 +1,1559 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="5/26/2021 2:38:51 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="OANBD07349"
+  DTS:CreatorName="INFORMATION\MCHsu1"
+  DTS:DTSID="{3250BBF7-B127-41C0-90AD-DCF0D43706F7}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="15.0.2000.150"
+  DTS:LocaleID="1028"
+  DTS:ObjectName="counts_comparison"
+  DTS:PackageType="5"
+  DTS:VersionBuild="14"
+  DTS:VersionGUID="{3D28F644-361B-475F-8CEB-EAAC37ACF977}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[WEHQEDWCLD01.WEC_EDW_PRD]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{522FF228-DD07-4B18-B085-91E39FEFB8EF}"
+      DTS:ObjectName="WEHQEDWCLD01.WEC_EDW_PRD">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=WEHQEDWCLD01;Initial Catalog=WEC_EDW_PRD;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[WEHQSAP12.PBW.SDQUERY]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{76D90238-E12E-4C50-AAF5-73244C43AA9F}"
+      DTS:ObjectName="WEHQSAP12.PBW.SDQUERY">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=WEHQSAP12;User ID=SDQUERY;Initial Catalog=PBW;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAe22w86PNYUCbbBP8KRm5HAAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC6BIVvueqfE4UnpwUNqV0hAAAAAASAAACgAAAAEAAAAC8mtpF1FhpxnPP4rvGTyHEoAAAAw3SAJp2GD3pLuOT6Va+DzL+6XzcNtQf8I419qPid6KAgAK0VpqZiYhQAAABo4sVRXr7F/LVgZSR8eDW57w/lnQ</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\counts_comparison"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="執行 SQL 工作"
+      DTS:DTSID="{DB81A644-08D7-4E9A-A3CA-D8D3AC0E33D5}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="counts_comparison"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{522FF228-DD07-4B18-B085-91E39FEFB8EF}"
+          SQLTask:SqlStatementSource="exec PRG.sp_insert_edw_row_counts" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\IDB"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="資料流程工作"
+      DTS:DTSID="{3471dff8-caad-4997-a2b5-1bc48c2d1022}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="IDB"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\IDB\OLE DB 來源"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB 來源;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; 著作權所有，並保留一切權利; http://www.microsoft.com/sql/support;7"
+              description="OLE DB 來源"
+              name="OLE DB 來源"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="命令逾時之前的秒數。值為 0 表示無限逾時。"
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="指定用於開啟資料列集之資料庫物件的名稱。"
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="指定包含用於開啟資料列集之資料庫物件名稱的變數。"
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="要執行的 SQL 命令。"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select 
+a.table_category + '_' + convert(varchar(100), getdate() , 23) as version, a.*
+from 
+(
+select 
+N'application' as table_category,
+N'IDB' as stage_type,
+N'IDB_ZTSD0120' as table_name, 
+count(*) as row_count,
+getdate() as updated_time_edw
+from [WEHQSAPIDB].[dbo].[ZTSD0120]
+) a</property>
+                <property
+                  dataType="System.String"
+                  description="包含要執行之 SQL 命令的變數。"
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="指定無法從資料來源取得字碼頁資訊時，要使用的資料行字碼頁。"
+                  name="DefaultCodePage">950</property>
+                <property
+                  dataType="System.Boolean"
+                  description="描述字元資料時，強制使用 DefaultCodePage 屬性值。"
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="指定用於存取資料庫的模式。"
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="SQL 命令中的參數和變數之間的對應。"
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\IDB\OLE DB 來源.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[WEHQSAP12.PBW.SDQUERY]"
+                  connectionManagerRefId="Package.ConnectionManagers[WEHQSAP12.PBW.SDQUERY]"
+                  description="用於存取資料庫的 OLE DB 執行階段連接。"
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出]"
+                  name="OLE DB 來源輸出">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_category]"
+                      length="50"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]"
+                      name="table_category"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[stage_type]"
+                      length="50"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]"
+                      name="stage_type"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_name]"
+                      length="40"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]"
+                      name="table_name"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]"
+                      dataType="i8"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[row_count]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]"
+                      name="row_count"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[version]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[version]"
+                      length="112"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[version]"
+                      name="version"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[updated_time_edw]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[updated_time_edw]"
+                      name="updated_time_edw"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_category]"
+                      dataType="wstr"
+                      length="11"
+                      name="table_category" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[stage_type]"
+                      dataType="wstr"
+                      length="3"
+                      name="stage_type" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_name]"
+                      dataType="wstr"
+                      length="12"
+                      name="table_name" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[row_count]"
+                      dataType="i4"
+                      name="row_count" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[version]"
+                      dataType="wstr"
+                      length="112"
+                      name="version" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      name="updated_time_edw" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出]"
+                  isErrorOut="true"
+                  name="OLE DB 來源錯誤輸出">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[version]"
+                      dataType="wstr"
+                      length="112"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[version]"
+                      name="version" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_category]"
+                      dataType="wstr"
+                      length="11"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_category]"
+                      name="table_category" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[stage_type]"
+                      dataType="wstr"
+                      length="3"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[stage_type]"
+                      name="stage_type" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_name]"
+                      dataType="wstr"
+                      length="12"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_name]"
+                      name="table_name" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[row_count]"
+                      dataType="i4"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[row_count]"
+                      name="row_count" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[updated_time_edw]"
+                      name="updated_time_edw" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\IDB\OLE DB 目的地"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB 目的地;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; 著作權所有，並保留一切權利; http://www.microsoft.com/sql/support;4"
+              description="OLE DB 目的地"
+              name="OLE DB 目的地"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="命令逾時之前的秒數。值為 0 表示無限逾時。"
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="指定用於開啟資料列集之資料庫物件的名稱。"
+                  name="OpenRowset">[CON].[counts_comparison]</property>
+                <property
+                  dataType="System.String"
+                  description="指定包含用於開啟資料列集之資料庫物件名稱的變數。"
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="要執行的 SQL 命令。"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="指定無法從資料來源取得字碼頁資訊時，要使用的資料行字碼頁。"
+                  name="DefaultCodePage">950</property>
+                <property
+                  dataType="System.Boolean"
+                  description="描述字元資料時，強制使用 DefaultCodePage 屬性值。"
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="指定用於存取資料庫的模式。"
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="指出提供給識別欄位的值是否複製到目的地。如果為 False，則會在目的地自動產生識別欄位的值。只有在開啟快速載入時才會套用。"
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="指出包含 Null 之資料行的 Null 是否會插入目的地。若是 False，則包含 Null 的資料行的預設值會插入目的地。唯有開啟快速載入時才適用。"
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="指定快速載入使用的選項。只有開啟快速載入時才會套用。"
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="指定在資料插入期間發出認可的時間。值為 0 指定在資料插入結束時發出一次認可。只有開啟快速載入時才會套用。"
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\IDB\OLE DB 目的地.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[WEHQEDWCLD01.WEC_EDW_PRD]"
+                  connectionManagerRefId="Package.ConnectionManagers[WEHQEDWCLD01.WEC_EDW_PRD]"
+                  description="用於存取資料庫的 OLE DB 執行階段連接。"
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入]"
+                  errorOrTruncationOperation="插入"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB 目的地輸入">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[table_category]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="table_category"
+                      externalMetadataColumnId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_category]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]" />
+                    <inputColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[stage_type]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="stage_type"
+                      externalMetadataColumnId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[stage_type]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]" />
+                    <inputColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[table_name]"
+                      cachedDataType="wstr"
+                      cachedLength="40"
+                      cachedName="table_name"
+                      externalMetadataColumnId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_name]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]" />
+                    <inputColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[row_count]"
+                      cachedDataType="i8"
+                      cachedName="row_count"
+                      externalMetadataColumnId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[row_count]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]" />
+                    <inputColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[version]"
+                      cachedDataType="wstr"
+                      cachedLength="112"
+                      cachedName="version"
+                      externalMetadataColumnId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[version]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[version]" />
+                    <inputColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[updated_time_edw]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="updated_time_edw"
+                      externalMetadataColumnId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[updated_time_edw]"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[updated_time_edw]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_category]"
+                      dataType="wstr"
+                      length="40"
+                      name="table_category" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[stage_type]"
+                      dataType="wstr"
+                      length="10"
+                      name="stage_type" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_name]"
+                      dataType="wstr"
+                      length="40"
+                      name="table_name" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[row_count]"
+                      dataType="wstr"
+                      length="10"
+                      name="row_count" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[query_count]"
+                      dataType="wstr"
+                      length="10"
+                      name="query_count" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[version]"
+                      dataType="wstr"
+                      length="40"
+                      name="version" />
+                    <externalMetadataColumn
+                      refId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      name="updated_time_edw" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\IDB\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB 目的地錯誤輸出"
+                  synchronousInputId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\IDB\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\IDB\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\IDB\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\IDB\資料轉換"
+              componentClassID="Microsoft.DataConvert"
+              contactInfo="資料轉換;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; 著作權所有，並保留一切權利; http://www.microsoft.com/sql/support;0"
+              description="資料轉換"
+              name="資料轉換"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\IDB\資料轉換.Inputs[資料轉換輸入]"
+                  name="資料轉換輸入">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\IDB\資料轉換.Inputs[資料轉換輸入].Columns[table_category]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="table_category"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]" />
+                    <inputColumn
+                      refId="Package\IDB\資料轉換.Inputs[資料轉換輸入].Columns[stage_type]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="stage_type"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]" />
+                    <inputColumn
+                      refId="Package\IDB\資料轉換.Inputs[資料轉換輸入].Columns[table_name]"
+                      cachedDataType="wstr"
+                      cachedLength="40"
+                      cachedName="table_name"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]" />
+                    <inputColumn
+                      refId="Package\IDB\資料轉換.Inputs[資料轉換輸入].Columns[row_count]"
+                      cachedDataType="i8"
+                      cachedName="row_count"
+                      lineageId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\IDB\資料轉換.Outputs[資料轉換輸出]"
+                  exclusionGroup="1"
+                  name="資料轉換輸出"
+                  synchronousInputId="Package\IDB\資料轉換.Inputs[資料轉換輸入]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[table_category]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      length="40"
+                      lineageId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[table_category]"
+                      name="table_category"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[stage_type]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[stage_type]"
+                      name="stage_type"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[table_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      length="40"
+                      lineageId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[table_name]"
+                      name="table_name"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[row_count]"
+                      dataType="i8"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\IDB\資料轉換.Outputs[資料轉換輸出].Columns[row_count]"
+                      name="row_count"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\IDB\資料轉換.Outputs[資料轉換錯誤輸出]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="資料轉換錯誤輸出"
+                  synchronousInputId="Package\IDB\資料轉換.Inputs[資料轉換輸入]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\IDB\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\IDB\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\IDB\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\IDB\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\IDB.Paths[OLE DB 來源輸出]"
+              endId="Package\IDB\資料轉換.Inputs[資料轉換輸入]"
+              name="OLE DB 來源輸出"
+              startId="Package\IDB\OLE DB 來源.Outputs[OLE DB 來源輸出]" />
+            <path
+              refId="Package\IDB.Paths[資料轉換輸出]"
+              endId="Package\IDB\OLE DB 目的地.Inputs[OLE DB 目的地輸入]"
+              name="資料轉換輸出"
+              startId="Package\IDB\資料轉換.Outputs[資料轉換輸出]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\PBW"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="資料流程工作"
+      DTS:DTSID="{953D7BE2-4059-4BC9-AFF0-2D235CB6E986}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="PBW"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\PBW\OLE DB 來源"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB 來源;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; 著作權所有，並保留一切權利; http://www.microsoft.com/sql/support;7"
+              description="OLE DB 來源"
+              name="OLE DB 來源"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="命令逾時之前的秒數。值為 0 表示無限逾時。"
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="指定用於開啟資料列集之資料庫物件的名稱。"
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="指定包含用於開啟資料列集之資料庫物件名稱的變數。"
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="要執行的 SQL 命令。"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">--counts comparison
+select 
+a.table_category + '_' + convert(varchar(100), getdate() , 23) as version, a.*
+from 
+(
+SELECT
+case 
+when t.name='/BIC/PZCUSTOMER' then N'customer'
+when t.name='/BIC/AZSD_OD1900' then N'billing'
+when t.name='/BIC/AZSD_OD1000' then N'delivery'
+when t.name='/BIC/AZSD_OD0500' then N'sales_order'
+end as table_category,
+N'PBW' as stage_type,
+t.name AS table_name,
+sum(p.rows) as row_count,
+getdate() as updated_time_edw
+FROM sys.tables t
+inner join sys.indexes i ON t.OBJECT_ID = i.object_id
+inner join sys.partitions p ON i.object_id = p.OBJECT_ID AND i.index_id = p.index_id
+inner join sys.allocation_units a ON p.partition_id = a.container_id
+WHERE t.name NOT LIKE 'dt%'
+AND i.OBJECT_ID &gt; 255
+AND i.index_id &lt;= 1
+and  t.name in 
+('/BIC/AZSD_OD0500', 
+'/BIC/AZSD_OD1000',
+'/BIC/PZCUSTOMER' ,
+'/BIC/AZSD_OD1900')
+GROUP BY t.name, i.object_id, i.index_id, i.name
+union all
+select 'material' , 'PBW', '/BI0/MMATERIAL' , count(*), getdate() as updated_time_edw  from [pbw].[/BI0/MMATERIAL]
+union all 
+select 'customer_salesview', 'PBW', '/BI0/MCUST_SALES' , count(*), getdate() as updated_time_edw from [pbw].[/BI0/MCUST_SALES]
+) a</property>
+                <property
+                  dataType="System.String"
+                  description="包含要執行之 SQL 命令的變數。"
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="指定無法從資料來源取得字碼頁資訊時，要使用的資料行字碼頁。"
+                  name="DefaultCodePage">950</property>
+                <property
+                  dataType="System.Boolean"
+                  description="描述字元資料時，強制使用 DefaultCodePage 屬性值。"
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="指定用於存取資料庫的模式。"
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="SQL 命令中的參數和變數之間的對應。"
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\PBW\OLE DB 來源.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[WEHQSAP12.PBW.SDQUERY]"
+                  connectionManagerRefId="Package.ConnectionManagers[WEHQSAP12.PBW.SDQUERY]"
+                  description="用於存取資料庫的 OLE DB 執行階段連接。"
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出]"
+                  name="OLE DB 來源輸出">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_category]"
+                      length="50"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]"
+                      name="table_category"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[stage_type]"
+                      length="50"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]"
+                      name="stage_type"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_name]"
+                      length="40"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]"
+                      name="table_name"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]"
+                      dataType="i8"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[row_count]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]"
+                      name="row_count"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[version]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[version]"
+                      length="119"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[version]"
+                      name="version"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[updated_time_edw]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[updated_time_edw]"
+                      name="updated_time_edw"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_category]"
+                      dataType="wstr"
+                      length="18"
+                      name="table_category" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[stage_type]"
+                      dataType="wstr"
+                      length="3"
+                      name="stage_type" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[table_name]"
+                      dataType="wstr"
+                      length="128"
+                      name="table_name" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[row_count]"
+                      dataType="i8"
+                      name="row_count" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[version]"
+                      dataType="wstr"
+                      length="119"
+                      name="version" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].ExternalColumns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      name="updated_time_edw" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出]"
+                  isErrorOut="true"
+                  name="OLE DB 來源錯誤輸出">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[version]"
+                      dataType="wstr"
+                      length="119"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[version]"
+                      name="version" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_category]"
+                      dataType="wstr"
+                      length="18"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_category]"
+                      name="table_category" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[stage_type]"
+                      dataType="wstr"
+                      length="3"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[stage_type]"
+                      name="stage_type" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_name]"
+                      dataType="wstr"
+                      length="128"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[table_name]"
+                      name="table_name" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[row_count]"
+                      dataType="i8"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[row_count]"
+                      name="row_count" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[updated_time_edw]"
+                      name="updated_time_edw" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源錯誤輸出].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\PBW\OLE DB 目的地"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB 目的地;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; 著作權所有，並保留一切權利; http://www.microsoft.com/sql/support;4"
+              description="OLE DB 目的地"
+              name="OLE DB 目的地"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="命令逾時之前的秒數。值為 0 表示無限逾時。"
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="指定用於開啟資料列集之資料庫物件的名稱。"
+                  name="OpenRowset">[CON].[counts_comparison]</property>
+                <property
+                  dataType="System.String"
+                  description="指定包含用於開啟資料列集之資料庫物件名稱的變數。"
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="要執行的 SQL 命令。"
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="指定無法從資料來源取得字碼頁資訊時，要使用的資料行字碼頁。"
+                  name="DefaultCodePage">950</property>
+                <property
+                  dataType="System.Boolean"
+                  description="描述字元資料時，強制使用 DefaultCodePage 屬性值。"
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="指定用於存取資料庫的模式。"
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="指出提供給識別欄位的值是否複製到目的地。如果為 False，則會在目的地自動產生識別欄位的值。只有在開啟快速載入時才會套用。"
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="指出包含 Null 之資料行的 Null 是否會插入目的地。若是 False，則包含 Null 的資料行的預設值會插入目的地。唯有開啟快速載入時才適用。"
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="指定快速載入使用的選項。只有開啟快速載入時才會套用。"
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="指定在資料插入期間發出認可的時間。值為 0 指定在資料插入結束時發出一次認可。只有開啟快速載入時才會套用。"
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\PBW\OLE DB 目的地.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[WEHQEDWCLD01.WEC_EDW_PRD]"
+                  connectionManagerRefId="Package.ConnectionManagers[WEHQEDWCLD01.WEC_EDW_PRD]"
+                  description="用於存取資料庫的 OLE DB 執行階段連接。"
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入]"
+                  errorOrTruncationOperation="插入"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB 目的地輸入">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[stage_type]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="stage_type"
+                      externalMetadataColumnId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[stage_type]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]" />
+                    <inputColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[table_name]"
+                      cachedDataType="wstr"
+                      cachedLength="40"
+                      cachedName="table_name"
+                      externalMetadataColumnId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_name]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]" />
+                    <inputColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[row_count]"
+                      cachedDataType="i8"
+                      cachedName="row_count"
+                      externalMetadataColumnId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[row_count]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]" />
+                    <inputColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[table_category]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="table_category"
+                      externalMetadataColumnId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_category]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]" />
+                    <inputColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[version]"
+                      cachedDataType="wstr"
+                      cachedLength="119"
+                      cachedName="version"
+                      externalMetadataColumnId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[version]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[version]" />
+                    <inputColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].Columns[updated_time_edw]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="updated_time_edw"
+                      externalMetadataColumnId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[updated_time_edw]"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[updated_time_edw]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_category]"
+                      dataType="wstr"
+                      length="40"
+                      name="table_category" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[stage_type]"
+                      dataType="wstr"
+                      length="10"
+                      name="stage_type" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[table_name]"
+                      dataType="wstr"
+                      length="40"
+                      name="table_name" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[row_count]"
+                      dataType="wstr"
+                      length="10"
+                      name="row_count" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[query_count]"
+                      dataType="wstr"
+                      length="10"
+                      name="query_count" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[version]"
+                      dataType="wstr"
+                      length="40"
+                      name="version" />
+                    <externalMetadataColumn
+                      refId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入].ExternalColumns[updated_time_edw]"
+                      dataType="dbTimeStamp"
+                      name="updated_time_edw" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\PBW\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB 目的地錯誤輸出"
+                  synchronousInputId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\PBW\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\PBW\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\PBW\OLE DB 目的地.Outputs[OLE DB 目的地錯誤輸出].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\PBW\資料轉換"
+              componentClassID="Microsoft.DataConvert"
+              contactInfo="資料轉換;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; 著作權所有，並保留一切權利; http://www.microsoft.com/sql/support;0"
+              description="資料轉換"
+              name="資料轉換"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\PBW\資料轉換.Inputs[資料轉換輸入]"
+                  name="資料轉換輸入">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\PBW\資料轉換.Inputs[資料轉換輸入].Columns[table_category]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="table_category"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]" />
+                    <inputColumn
+                      refId="Package\PBW\資料轉換.Inputs[資料轉換輸入].Columns[stage_type]"
+                      cachedDataType="wstr"
+                      cachedLength="50"
+                      cachedName="stage_type"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]" />
+                    <inputColumn
+                      refId="Package\PBW\資料轉換.Inputs[資料轉換輸入].Columns[table_name]"
+                      cachedDataType="wstr"
+                      cachedLength="40"
+                      cachedName="table_name"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]" />
+                    <inputColumn
+                      refId="Package\PBW\資料轉換.Inputs[資料轉換輸入].Columns[row_count]"
+                      cachedDataType="i8"
+                      cachedName="row_count"
+                      lineageId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\PBW\資料轉換.Outputs[資料轉換輸出]"
+                  exclusionGroup="1"
+                  name="資料轉換輸出"
+                  synchronousInputId="Package\PBW\資料轉換.Inputs[資料轉換輸入]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[table_category]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      length="40"
+                      lineageId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[table_category]"
+                      name="table_category"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_category]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[stage_type]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      length="10"
+                      lineageId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[stage_type]"
+                      name="stage_type"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[stage_type]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[table_name]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      length="40"
+                      lineageId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[table_name]"
+                      name="table_name"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[table_name]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                    <outputColumn
+                      refId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[row_count]"
+                      dataType="i8"
+                      errorOrTruncationOperation="轉換"
+                      errorRowDisposition="FailComponent"
+                      lineageId="Package\PBW\資料轉換.Outputs[資料轉換輸出].Columns[row_count]"
+                      name="row_count"
+                      truncationRowDisposition="FailComponent">
+                      <properties>
+                        <property
+                          containsID="true"
+                          dataType="System.Int32"
+                          description="指定作為轉換之資料來源的輸入資料行。"
+                          name="SourceInputColumnLineageID">#{Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出].Columns[row_count]}</property>
+                        <property
+                          dataType="System.Boolean"
+                          description="指出資料行是否使用更快、地區設定中立的剖析常式。"
+                          name="FastParse">false</property>
+                      </properties>
+                    </outputColumn>
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\PBW\資料轉換.Outputs[資料轉換錯誤輸出]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="資料轉換錯誤輸出"
+                  synchronousInputId="Package\PBW\資料轉換.Inputs[資料轉換輸入]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\PBW\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\PBW\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\PBW\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\PBW\資料轉換.Outputs[資料轉換錯誤輸出].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\PBW.Paths[OLE DB 來源輸出]"
+              endId="Package\PBW\資料轉換.Inputs[資料轉換輸入]"
+              name="OLE DB 來源輸出"
+              startId="Package\PBW\OLE DB 來源.Outputs[OLE DB 來源輸出]" />
+            <path
+              refId="Package\PBW.Paths[資料轉換輸出]"
+              endId="Package\PBW\OLE DB 目的地.Inputs[OLE DB 目的地輸入]"
+              name="資料轉換輸出"
+              startId="Package\PBW\資料轉換.Outputs[資料轉換輸出]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[條件約束]"
+      DTS:CreationName=""
+      DTS:DTSID="{0F88D97B-A3F9-4B76-99FC-D8AAFBD4E898}"
+      DTS:From="Package\PBW"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="條件約束"
+      DTS:To="Package\IDB" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[條件約束 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{685B70B2-B69C-4418-9081-A0AA4A054A6C}"
+      DTS:From="Package\counts_comparison"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="條件約束 1"
+      DTS:To="Package\PBW" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--此 CDATA 區段包含封裝的配置資訊。此區段包括諸如 (x,y) 座標、寬度和長度等資訊。-->
+<!--如果您手動編輯此區段但出錯，則可加以刪除。 -->
+<!--封裝仍可正常載入，但先前的配置資訊會遺失，而設計師將在設計介面上自動重新排列元素。-->
+<Objects
+  Version="8">
+  <!--下面每個節點將包含不會影響執行階段行為的屬性。-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="106,42"
+          Id="Package\PBW"
+          TopLeft="68.3333306180107,114.214279879113" />
+        <NodeLayout
+          Size="106,42"
+          Id="Package\IDB"
+          TopLeft="74.1666637195483,202.428561086558" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[條件約束]"
+          TopLeft="124.24999716878,156.214279879113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,46.2142812074451"
+              Start="0,0"
+              End="0,38.7142812074451">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,38.7142812074451" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="183,42"
+          Id="Package\counts_comparison"
+          TopLeft="36.6666652096642,28.785712815061" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[條件約束 1]"
+          TopLeft="124.749997913837,70.785712815061">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,43.4285670640519"
+              Start="0,0"
+              End="0,35.9285670640519">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,35.9285670640519" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\PBW">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="150,42"
+          Id="Package\PBW\OLE DB 來源"
+          TopLeft="89.1666631235018,48.285711818812" />
+        <NodeLayout
+          Size="162,42"
+          Id="Package\PBW\OLE DB 目的地"
+          TopLeft="89.9999964237215,156.142849267746" />
+        <NodeLayout
+          Size="127,42"
+          Id="Package\PBW\資料轉換"
+          TopLeft="291.666655076875,99.71428286786" />
+        <EdgeLayout
+          Id="Package\PBW.Paths[OLE DB 來源輸出]"
+          TopLeft="239.166663123502,69.285711818812">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="52.4999919533732,45.7619043823813"
+              Start="0,0"
+              End="44.9999919533732,45.7619043823813">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="26.3440320464451,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="26.3440320464451,0"
+                    Point2="30.3440320464451,0"
+                    Point3="30.3440320464451,4" />
+                  <mssgle:LineSegment
+                    End="30.3440320464451,41.7619043823813" />
+                  <mssgle:CubicBezierSegment
+                    Point1="30.3440320464451,41.7619043823813"
+                    Point2="30.3440320464451,45.7619043823813"
+                    Point3="34.3440320464451,45.7619043823813" />
+                  <mssgle:LineSegment
+                    End="44.9999919533732,45.7619043823813" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\PBW.Paths[資料轉換輸出]"
+          TopLeft="291.666655076875,126.380949534527">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-39.6666586531536,50.7618997332192"
+              Start="0,0"
+              End="-32.1666586531536,50.7618997332192">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-12.74005778023,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-12.74005778023,0"
+                    Point2="-16.74005778023,0"
+                    Point3="-16.74005778023,4" />
+                  <mssgle:LineSegment
+                    End="-16.74005778023,46.7618997332192" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-16.74005778023,46.7618997332192"
+                    Point2="-16.74005778023,50.7618997332192"
+                    Point3="-20.74005778023,50.7618997332192" />
+                  <mssgle:LineSegment
+                    End="-32.1666586531536,50.7618997332192" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\PBW\OLE DB 來源">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\PBW\OLE DB 目的地">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\IDB">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="127,42"
+          Id="Package\IDB\資料轉換"
+          TopLeft="297.499988178413,107.142853916908" />
+        <NodeLayout
+          Size="162,42"
+          Id="Package\IDB\OLE DB 目的地"
+          TopLeft="88.666662229432,146.642848935663" />
+        <NodeLayout
+          Size="150,42"
+          Id="Package\IDB\OLE DB 來源"
+          TopLeft="89.1666631235018,46.42856905655" />
+        <EdgeLayout
+          Id="Package\IDB.Paths[資料轉換輸出]"
+          TopLeft="297.499988178413,133.809520583575">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-46.833325948981,33.8333283520884"
+              Start="0,0"
+              End="-39.333325948981,33.8333283520884">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-15.7645228775516,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-15.7645228775516,0"
+                    Point2="-19.7645228775516,0"
+                    Point3="-19.7645228775516,4" />
+                  <mssgle:LineSegment
+                    End="-19.7645228775516,29.8333283520884" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-19.7645228775516,29.8333283520884"
+                    Point2="-19.7645228775516,33.8333283520884"
+                    Point3="-23.7645228775516,33.8333283520884" />
+                  <mssgle:LineSegment
+                    End="-39.333325948981,33.8333283520884" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\IDB.Paths[OLE DB 來源輸出]"
+          TopLeft="239.166663123502,67.42856905655">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="58.3333250549107,60.714284860358"
+              Start="0,0"
+              End="50.8333250549107,60.714284860358">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="25.1666625274554,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="25.1666625274554,0"
+                    Point2="29.1666625274554,0"
+                    Point3="29.1666625274554,4" />
+                  <mssgle:LineSegment
+                    End="29.1666625274554,56.714284860358" />
+                  <mssgle:CubicBezierSegment
+                    Point1="29.1666625274554,56.714284860358"
+                    Point2="29.1666625274554,60.714284860358"
+                    Point3="33.1666625274554,60.714284860358" />
+                  <mssgle:LineSegment
+                    End="50.8333250549107,60.714284860358" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\IDB\OLE DB 目的地">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\IDB\OLE DB 來源">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
